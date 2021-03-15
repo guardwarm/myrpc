@@ -1,0 +1,2 @@
+netty=com.guardwarm.framework.remoting.transport.netty.client.NettyRpcClient
+socket=com.guardwarm.framework.remoting.transport.socket.SocketRpcClient
