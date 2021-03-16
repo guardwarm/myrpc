@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * RPC reference annotation
- * autowire the service implementation class
+ * 自动注入符合的服务实现类
  * @author guardWarm
  * @date 2021-03-14 13:17
  */
@@ -14,13 +14,12 @@ import java.lang.annotation.*;
 @Inherited
 public @interface RpcReference {
 	/**
-	 * Service version, default value is empty string
+	 * 服务版本
 	 */
 	String version() default "";
 
 	/**
-	 * Service group, default value is empty string
-	 * 同一个接口的不同实例以此区分
+	 * 服务组，同一个接口的不同实例以此区分
 	 */
 	String group() default "";
 }

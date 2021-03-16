@@ -3,6 +3,7 @@ package com.guardwarm.common.exception;
 import com.guardwarm.common.enums.RpcErrorMessageEnum;
 
 /**
+ * RPC操作异常
  * @author guardWarm
  * @date 2021-03-14 10:30
  */

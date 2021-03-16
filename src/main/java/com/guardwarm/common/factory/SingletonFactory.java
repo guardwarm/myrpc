@@ -16,7 +16,8 @@ import java.util.Map;
  */
 @NoArgsConstructor
 public class SingletonFactory {
-	private static final Map<String, Object> OBJECT_MAP = new HashMap<>();
+	private static final Map<String, Object> OBJECT_MAP
+			= new HashMap<>();
 
 	public static <T> T getInstance(Class<T> c) {
 		String key = c.toString();

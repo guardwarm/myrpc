@@ -3,11 +3,11 @@ package com.guardwarm.framework.loadbalance;
 import java.util.List;
 
 /**
- * Abstract class for a load balancing policy
+ * 复杂均衡的抽象类
  * @author guardWarm
  * @date 2021-03-14 18:58
  */
-public abstract class AbstartLoadBalance implements LoadBalance {
+public abstract class AbstractLoadBalance implements LoadBalance {
 	@Override
 	public String selectServiceAddress(List<String> serviceAddresses, String rpcServiceName) {
 		if (serviceAddresses == null || serviceAddresses.size() == 0) {

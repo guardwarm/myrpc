@@ -2,6 +2,7 @@ package com.guardwarm.framework.annotation;
 
 import com.guardwarm.framework.spring.CustomScannerRegistrar;
 import org.springframework.context.annotation.Import;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
 

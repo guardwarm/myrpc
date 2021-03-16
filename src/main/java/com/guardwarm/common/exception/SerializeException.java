@@ -1,6 +1,7 @@
 package com.guardwarm.common.exception;
 
 /**
+ * 序列化异常
  * @author guardWarm
  * @date 2021-03-14 10:31
  */

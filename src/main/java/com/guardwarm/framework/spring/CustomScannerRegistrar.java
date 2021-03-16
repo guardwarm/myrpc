@@ -30,6 +30,10 @@ public class CustomScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 
 	}
 
+	/**
+	 * @param annotationMetadata 注解数据
+	 * @param beanDefinitionRegistry bd注册
+	 */
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry beanDefinitionRegistry) {
 		//get the attributes and values of RpcScan annotation

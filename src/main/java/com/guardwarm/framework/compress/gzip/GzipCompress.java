@@ -14,9 +14,7 @@ import java.util.zip.GZIPOutputStream;
  * @date 2021-03-14 17:14
  */
 public class GzipCompress implements Compress {
-	/**
-	 * 缓存区大小
-	 */
+
 	private static final int BUFFER_SIZE = 1024 * 4;
 
 	@Override

@@ -42,6 +42,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Slf4j
 public class ExtensionLoader<T> {
 	private static final String SERVICE_DIRECTORY = "META-INF/extensions/";
+
 	private static final Map<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>();
 	private static final Map<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>();
 
@@ -71,7 +72,8 @@ public class ExtensionLoader<T> {
 			throw new IllegalArgumentException("Extension type must be annotated by @SPI");
 		}
 		// firstly get from cache, if not hit, create one
-		ExtensionLoader<S> extensionLoader = (ExtensionLoader<S>) EXTENSION_LOADERS.get(type);
+		ExtensionLoader<S> extensionLoader
+				= (ExtensionLoader<S>) EXTENSION_LOADERS.get(type);
 		if (extensionLoader == null) {
 			EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<S>(type));
 			//noinspection unchecked

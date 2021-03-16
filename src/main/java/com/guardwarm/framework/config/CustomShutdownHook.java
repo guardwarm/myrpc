@@ -10,8 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 /**
- * When the server  is closed, do something such as unregister all services
- * 定制shutdown时的钩子
+ * 服务关闭时的钩子方法，做清除工作
  * @author guardWarm
  * @date 2021-03-14 16:59
  */

@@ -15,13 +15,16 @@ import lombok.*;
 @ToString
 public class RpcServiceProperties {
 	/**
-	 * service version
+	 * 服务版本
 	 */
 	private String version;
 	/**
-	 * when the interface has multiple implementation classes, distinguish by group
+	 * 服务所属组（用于区分同一服务的不同实现）
 	 */
 	private String group;
+	/**
+	 * 服务名称
+	 */
 	private String serviceName;
 
 	public String toRpcServiceName() {

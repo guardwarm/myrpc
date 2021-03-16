@@ -8,6 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 线程池配置类
  * @author guardWarm
  * @date 2021-03-14 10:38
  */

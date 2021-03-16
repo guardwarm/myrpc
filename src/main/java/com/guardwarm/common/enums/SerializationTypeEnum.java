@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 序列化类型
+ * 支持的序列化类型
  * @author guardWarm
  * @date 2021-03-14 10:59
  */

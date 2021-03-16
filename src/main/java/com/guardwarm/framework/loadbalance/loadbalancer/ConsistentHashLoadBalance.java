@@ -1,24 +1,22 @@
 package com.guardwarm.framework.loadbalance.loadbalancer;
 
-import com.google.common.collect.Lists;
-import com.guardwarm.framework.loadbalance.AbstartLoadBalance;
+import com.guardwarm.framework.loadbalance.AbstractLoadBalance;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * refer to dubbo consistent hash load balance: https://github.com/apache/dubbo/blob/2d9583adf26a2d8bd6fb646243a9fe80a77e65d5/dubbo-cluster/src/main/java/org/apache/dubbo/rpc/cluster/loadbalance/ConsistentHashLoadBalance.java
+ * 参考dubbo
  * 基于一致性哈希的获取策略
  * @author guardWarm
  * @date 2021-03-14 19:04
  */
-public class ConsistentHashLoadBalance extends AbstartLoadBalance {
+public class ConsistentHashLoadBalance extends AbstractLoadBalance {
 	private final ConcurrentHashMap<String, ConsistentHashSelector> selectors
 			= new ConcurrentHashMap<>();
 
@@ -30,7 +28,7 @@ public class ConsistentHashLoadBalance extends AbstartLoadBalance {
 
 		// check for updates
 		if (selector == null || selector.identityHashCode != identityHashCode) {
-			// 每隔serviceAddress生产的虚拟节点个数
+			// 每个serviceAddress生产的虚拟节点个数
 			int REPLICA_NUMBER = 160;
 			selectors.put(rpcServiceName, new ConsistentHashSelector(serviceAddresses, REPLICA_NUMBER, identityHashCode));
 			selector = selectors.get(rpcServiceName);

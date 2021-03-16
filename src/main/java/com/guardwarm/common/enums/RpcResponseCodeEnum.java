@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * rpc响应结果状态码
+ * rpc响应状态码
  * @author guardWarm
  * @date 2021-03-14 11:06
  */

@@ -29,18 +29,31 @@ public class SocketRpcClient implements RpcRequestTransport {
 				ExtensionLoader.getExtensionLoader(ServiceDiscovery.class).getExtension("zk");
 	}
 
+	/**
+	 * 发送rpcRequest
+	 * @param rpcRequest message body
+	 * @return
+	 */
 	@Override
 	public Object sendRpcRequest(RpcRequest rpcRequest) {
 		// build rpc service name by rpcRequest
-		String rpcServiceName = RpcServiceProperties.builder().serviceName(rpcRequest.getInterfaceName())
-				.group(rpcRequest.getGroup()).version(rpcRequest.getVersion()).build().toRpcServiceName();
-		InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcServiceName);
+		String rpcServiceName
+				= RpcServiceProperties.builder()
+				.serviceName(rpcRequest.getInterfaceName())
+				.group(rpcRequest.getGroup())
+				.version(rpcRequest.getVersion())
+				.build().toRpcServiceName();
+		InetSocketAddress inetSocketAddress
+				= serviceDiscovery
+				.lookupService(rpcServiceName);
 		try (Socket socket = new Socket()) {
 			socket.connect(inetSocketAddress);
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+			ObjectOutputStream objectOutputStream
+					= new ObjectOutputStream(socket.getOutputStream());
 			// Send data to the server through the output stream
 			objectOutputStream.writeObject(rpcRequest);
-			ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+			ObjectInputStream objectInputStream
+					= new ObjectInputStream(socket.getInputStream());
 			// Read RpcResponse from the input stream
 			return objectInputStream.readObject();
 		} catch (IOException | ClassNotFoundException e) {

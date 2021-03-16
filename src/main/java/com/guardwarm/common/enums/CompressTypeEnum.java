@@ -17,7 +17,7 @@ public enum CompressTypeEnum {
 	private final String name;
 
 	/**
-	 * 获取code对应name
+	 * 获取code对应name，不存在时返回null
 	 * @param code 代码
 	 * @return 对应的name
 	 */

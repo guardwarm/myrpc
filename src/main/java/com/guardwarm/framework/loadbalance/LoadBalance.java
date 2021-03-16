@@ -5,7 +5,6 @@ import com.guardwarm.common.extension.SPI;
 import java.util.List;
 
 /**
- * Interface to the load balancing policy
  * 负载均衡策略
  * @author guardWarm
  * @date 2021-03-14 18:17
@@ -13,10 +12,9 @@ import java.util.List;
 @SPI
 public interface LoadBalance {
 	/**
-	 * Choose one from the list of existing service addresses list
-	 *
-	 * @param serviceAddresses Service address list
-	 * @return target service address
+	 * 从存在的服务地址中选一个返回
+	 * @param serviceAddresses 服务地址列表
+	 * @return target service address 被选中的服务地址
 	 */
 	String selectServiceAddress(List<String> serviceAddresses, String rpcServiceName);
 }

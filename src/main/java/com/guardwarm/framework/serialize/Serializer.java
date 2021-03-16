@@ -1,9 +1,12 @@
 package com.guardwarm.framework.serialize;
 
+import com.guardwarm.common.extension.SPI;
+
 /**
  * @author guardWarm
  * @date 2021-03-14 13:39
  */
+@SPI
 public interface Serializer {
 	/**
 	 * 序列化

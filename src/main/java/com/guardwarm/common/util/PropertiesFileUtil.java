@@ -19,14 +19,16 @@ public final class PropertiesFileUtil {
 	private PropertiesFileUtil() {
 	}
 
+	/**
+	 * 加载配置文件
+	 * @param fileName 配置文件名
+	 * @return 加载到的Properties
+	 */
 	public static Properties readPropertiesFile(String fileName) {
 		// 配置文件目录路径
 		URL url = Thread.currentThread().getContextClassLoader().getResource("");
-		String rpcConfigPath = "";
-		if (url != null) {
-			// 具体配置文件路径
-			rpcConfigPath = url.getPath() + fileName;
-		}
+		String rpcConfigPath = url == null ? "" : url.getPath() + fileName;
+
 		Properties properties = null;
 		try (InputStreamReader inputStreamReader = new InputStreamReader(
 				new FileInputStream(rpcConfigPath), StandardCharsets.UTF_8)) {
