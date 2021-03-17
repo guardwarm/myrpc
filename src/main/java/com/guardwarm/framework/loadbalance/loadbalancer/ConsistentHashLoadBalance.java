@@ -103,11 +103,17 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
 		}
 
 		public String selectForKey(long hashCode) {
-			Map.Entry<Long, String> entry = virtualInvokers.tailMap(hashCode, true).firstEntry();
+			// 第一个比给定hash值大的服务节点
+			Map.Entry<Long, String> entry
+					= virtualInvokers
+					.tailMap(hashCode, true)
+					.firstEntry();
 
 			if (entry == null) {
+				// 找不到第一个比他大的就返回总的第一个节点
 				entry = virtualInvokers.firstEntry();
 			}
+
 
 			return entry.getValue();
 		}

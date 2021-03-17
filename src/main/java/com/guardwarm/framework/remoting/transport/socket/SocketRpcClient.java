@@ -26,13 +26,15 @@ public class SocketRpcClient implements RpcRequestTransport {
 
 	public SocketRpcClient() {
 		this.serviceDiscovery =
-				ExtensionLoader.getExtensionLoader(ServiceDiscovery.class).getExtension("zk");
+				ExtensionLoader
+						.getExtensionLoader(ServiceDiscovery.class)
+						.getExtension("zk");
 	}
 
 	/**
 	 * 发送rpcRequest
 	 * @param rpcRequest message body
-	 * @return
+	 * @return 服务器返回结果
 	 */
 	@Override
 	public Object sendRpcRequest(RpcRequest rpcRequest) {
@@ -48,14 +50,15 @@ public class SocketRpcClient implements RpcRequestTransport {
 				.lookupService(rpcServiceName);
 		try (Socket socket = new Socket()) {
 			socket.connect(inetSocketAddress);
-			ObjectOutputStream objectOutputStream
-					= new ObjectOutputStream(socket.getOutputStream());
-			// Send data to the server through the output stream
-			objectOutputStream.writeObject(rpcRequest);
-			ObjectInputStream objectInputStream
-					= new ObjectInputStream(socket.getInputStream());
-			// Read RpcResponse from the input stream
-			return objectInputStream.readObject();
+			try (ObjectOutputStream objectOutputStream
+					     = new ObjectOutputStream(socket.getOutputStream());
+			     ObjectInputStream objectInputStream
+					     = new ObjectInputStream(socket.getInputStream());){
+				// Send data to the server through the output stream
+				objectOutputStream.writeObject(rpcRequest);
+				// Read RpcResponse from the input stream
+				return objectInputStream.readObject();
+			}
 		} catch (IOException | ClassNotFoundException e) {
 			throw new RpcException("调用服务失败:", e);
 		}

@@ -26,7 +26,8 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
 	private final RpcRequestHandler rpcRequestHandler;
 
 	public NettyRpcServerHandler() {
-		this.rpcRequestHandler = SingletonFactory.getInstance(RpcRequestHandler.class);
+		this.rpcRequestHandler =
+				SingletonFactory.getInstance(RpcRequestHandler.class);
 	}
 
 	@Override
@@ -48,10 +49,12 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
 					log.info(String.format("server get result: %s", result.toString()));
 					rpcMessage.setMessageType(RpcConstants.RESPONSE_TYPE);
 					if (ctx.channel().isActive() && ctx.channel().isWritable()) {
-						RpcResponse<Object> rpcResponse = RpcResponse.success(result, rpcRequest.getRequestId());
+						RpcResponse<Object> rpcResponse
+								= RpcResponse.success(result, rpcRequest.getRequestId());
 						rpcMessage.setData(rpcResponse);
 					} else {
-						RpcResponse<Object> rpcResponse = RpcResponse.fail(RpcResponseCodeEnum.FAIL);
+						RpcResponse<Object> rpcResponse
+								= RpcResponse.fail(RpcResponseCodeEnum.FAIL);
 						rpcMessage.setData(rpcResponse);
 						log.error("not writable now, message dropped");
 					}
@@ -64,6 +67,9 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
 		}
 	}
 
+	/**
+	 * 心跳检测时触发
+	 */
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent) {

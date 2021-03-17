@@ -1,8 +1,10 @@
 package com.guardwarm.framework.spring;
 
 import com.guardwarm.common.entity.RpcServiceProperties;
+import com.guardwarm.common.enums.RpcConfigEnum;
 import com.guardwarm.common.extension.ExtensionLoader;
 import com.guardwarm.common.factory.SingletonFactory;
+import com.guardwarm.common.util.PropertiesFileUtil;
 import com.guardwarm.framework.annotation.RpcReference;
 import com.guardwarm.framework.annotation.RpcService;
 import com.guardwarm.framework.provider.ServiceProvider;
@@ -16,8 +18,10 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.Properties;
 
 /**
+ * SpringBean后置处理器
  * @author guardWarm
  * @date 2021-03-14 23:09
  */
@@ -31,9 +35,12 @@ public class SpringBeanPostProcessor implements BeanPostProcessor {
 		this.serviceProvider = SingletonFactory
 				.getInstance(ServiceProviderImpl.class);
 		// SPI获取
+		Properties properties
+				= PropertiesFileUtil
+				.readPropertiesFile(RpcConfigEnum.RPC_CONFIG_PATH.getPropertyValue());
 		this.rpcClient = ExtensionLoader
 				.getExtensionLoader(RpcRequestTransport.class)
-				.getExtension("socket");
+				.getExtension(properties.getProperty(RpcConfigEnum.CONNECTION_WAY.getPropertyValue()));
 	}
 
 	/**

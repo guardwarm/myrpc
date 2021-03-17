@@ -8,6 +8,7 @@ import org.apache.curator.framework.CuratorFramework;
 import java.net.InetSocketAddress;
 
 /**
+ * 服务注册--在zk中添加永久节点
  * @author guardWarm
  * @date 2021-03-14 20:58
  */

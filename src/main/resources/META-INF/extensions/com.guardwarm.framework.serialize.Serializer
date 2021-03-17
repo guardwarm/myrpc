@@ -1,2 +1,2 @@
-kyro=com.guardwarm.framework.serialize.kyro.KryoSerializer
+kyro=com.guardwarm.framework.serialize.kryo.KryoSerializer
 protostuff=com.guardwarm.framework.serialize.protostuff.ProtostuffSerializer

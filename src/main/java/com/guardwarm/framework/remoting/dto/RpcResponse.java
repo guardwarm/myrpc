@@ -31,6 +31,7 @@ public class RpcResponse<T> implements Serializable {
 	 */
 	private T data;
 
+	// 静态工厂
 	public static <T> RpcResponse<T> success(T data, String requestId) {
 		RpcResponse<T> response = new RpcResponse<>();
 		response.setCode(RpcResponseCodeEnum.SUCCESS.getCode());

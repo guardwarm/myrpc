@@ -10,10 +10,9 @@ import com.guardwarm.framework.remoting.dto.RpcRequest;
 @SPI
 public interface RpcRequestTransport {
 	/**
-	 * send rpc request to server and get result
-	 *
-	 * @param rpcRequest message body
-	 * @return data from server
+	 * 发送rpcRequest到服务器并获得结果
+	 * @param rpcRequest 请求
+	 * @return 服务器返回的数据
 	 */
 	Object sendRpcRequest(RpcRequest rpcRequest);
 }

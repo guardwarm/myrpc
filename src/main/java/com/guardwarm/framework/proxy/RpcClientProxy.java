@@ -27,13 +27,16 @@ public class RpcClientProxy implements InvocationHandler {
 	private static final String INTERFACE_NAME = "interfaceName";
 
 	/**
-	 * Used to send requests to the server.And there are two implementations: socket and netty
+	 * 用于发送request的服务.
+	 * 有两种实现: socket and netty
 	 */
 	private final RpcRequestTransport rpcRequestTransport;
+
 	private final RpcServiceProperties rpcServiceProperties;
 
 	public RpcClientProxy(RpcRequestTransport rpcRequestTransport, RpcServiceProperties rpcServiceProperties) {
 		this.rpcRequestTransport = rpcRequestTransport;
+
 		// 赋默认值
 		if (rpcServiceProperties.getGroup() == null) {
 			rpcServiceProperties.setGroup("");
@@ -51,17 +54,15 @@ public class RpcClientProxy implements InvocationHandler {
 				= RpcServiceProperties.builder().group("").version("").build();
 	}
 
-	/**
-	 * get the proxy object
-	 */
+
 	@SuppressWarnings("unchecked")
 	public <T> T getProxy(Class<T> clazz) {
 		return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, this);
 	}
 
 	/**
-	 * This method is actually called when you use a proxy object to call a method.
-	 * The proxy object is the object you get through the getProxy method.
+	 * 使用代理对象调用方法时，实际上会调用此方法。
+	 * 代理对象是您通过getProxy方法获得的对象。
 	 */
 	@SneakyThrows
 	@SuppressWarnings("unchecked")
@@ -80,7 +81,10 @@ public class RpcClientProxy implements InvocationHandler {
 				.build();
 		RpcResponse<Object> rpcResponse = null;
 		if (rpcRequestTransport instanceof NettyRpcClient) {
-			CompletableFuture<RpcResponse<Object>> completableFuture = (CompletableFuture<RpcResponse<Object>>) rpcRequestTransport.sendRpcRequest(rpcRequest);
+			CompletableFuture<RpcResponse<Object>> completableFuture
+					= (CompletableFuture<RpcResponse<Object>>) rpcRequestTransport
+					.sendRpcRequest(rpcRequest);
+			// 等待必要的时间以完成此将来，然后返回其结果
 			rpcResponse = completableFuture.get();
 		}
 		if (rpcRequestTransport instanceof SocketRpcClient) {
@@ -90,15 +94,21 @@ public class RpcClientProxy implements InvocationHandler {
 		return rpcResponse.getData();
 	}
 
+	/**
+	 * 检验响应是否正确
+	 * @param rpcResponse 响应对象
+	 * @param rpcRequest 请求对象
+	 */
 	private void check(RpcResponse<Object> rpcResponse, RpcRequest rpcRequest) {
+		// 响应为空
 		if (rpcResponse == null) {
 			throw new RpcException(RpcErrorMessageEnum.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
 		}
-
+		// RequestId请求的和响应的对不上
 		if (!rpcRequest.getRequestId().equals(rpcResponse.getRequestId())) {
 			throw new RpcException(RpcErrorMessageEnum.REQUEST_NOT_MATCH_RESPONSE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
 		}
-
+		// 不是成功的响应
 		if (rpcResponse.getCode() == null || !rpcResponse.getCode().equals(RpcResponseCodeEnum.SUCCESS.getCode())) {
 			throw new RpcException(RpcErrorMessageEnum.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
 		}

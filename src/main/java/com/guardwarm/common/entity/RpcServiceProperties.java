@@ -3,7 +3,7 @@ package com.guardwarm.common.entity;
 import lombok.*;
 
 /**
- * 协议格式 ≈ 协议头
+ * 被注册的服务信息 ≈ 可以唯一标识服务的实现类
  * @author guardWarm
  * @date 2021-03-14 11:38
  */

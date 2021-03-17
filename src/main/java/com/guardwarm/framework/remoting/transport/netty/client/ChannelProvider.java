@@ -21,13 +21,14 @@ public class ChannelProvider {
 
 	public Channel get(InetSocketAddress inetSocketAddress) {
 		String key = inetSocketAddress.toString();
-		// determine if there is a connection for the corresponding address
 		if (channelMap.containsKey(key)) {
 			Channel channel = channelMap.get(key);
-			// if so, determine if the connection is available, and if so, get it directly
+			// 确定连接是否可用
 			if (channel != null && channel.isActive()) {
+				// 直接获取连接
 				return channel;
 			} else {
+				// 移除连接
 				channelMap.remove(key);
 			}
 		}

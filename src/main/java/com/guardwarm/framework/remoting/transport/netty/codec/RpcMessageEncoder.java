@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 编码器
  * @author guardWarm
  * @date 2021-03-14 17:07
  */
@@ -22,6 +23,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
 	private static final AtomicInteger ATOMIC_INTEGER = new AtomicInteger(0);
 
+	/**
+	 * 编码--按协议格式封装
+	 * @param ctx ChannelHandlerContext
+	 * @param rpcMessage 待编码对象
+	 * @param out ByteBuf
+	 */
 	@Override
 	protected void encode(ChannelHandlerContext ctx, RpcMessage rpcMessage, ByteBuf out) {
 		try {
@@ -33,6 +40,7 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
 			out.writeByte(messageType);
 			out.writeByte(rpcMessage.getCodec());
 			out.writeByte(CompressTypeEnum.GZIP.getCode());
+			// requestId/responseId
 			out.writeInt(ATOMIC_INTEGER.getAndIncrement());
 			// build full length
 			byte[] bodyBytes = null;
@@ -43,12 +51,16 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
 				// serialize the object
 				String codecName = SerializationTypeEnum.getName(rpcMessage.getCodec());
 				log.info("codec name: [{}] ", codecName);
-				Serializer serializer = ExtensionLoader.getExtensionLoader(Serializer.class)
+				Serializer serializer
+						= ExtensionLoader
+						.getExtensionLoader(Serializer.class)
 						.getExtension(codecName);
 				bodyBytes = serializer.serialize(rpcMessage.getData());
 				// compress the bytes
 				String compressName = CompressTypeEnum.getName(rpcMessage.getCompress());
-				Compress compress = ExtensionLoader.getExtensionLoader(Compress.class)
+				Compress compress
+						= ExtensionLoader
+						.getExtensionLoader(Compress.class)
 						.getExtension(compressName);
 				bodyBytes = compress.compress(bodyBytes);
 				fullLength += bodyBytes.length;
@@ -57,13 +69,14 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
 			if (bodyBytes != null) {
 				out.writeBytes(bodyBytes);
 			}
+			// 保存当前待写入位置
 			int writeIndex = out.writerIndex();
+			// 下标移到该写入包长的索引处
 			out.writerIndex(writeIndex - fullLength + RpcConstants.MAGIC_NUMBER.length + 1);
 			out.writeInt(fullLength);
 			out.writerIndex(writeIndex);
 		} catch (Exception e) {
 			log.error("Encode request error!", e);
 		}
-
 	}
 }

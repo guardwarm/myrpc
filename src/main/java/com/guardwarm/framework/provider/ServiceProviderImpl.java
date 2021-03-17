@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ServiceProviderImpl implements ServiceProvider{
 	/**
+	 * 服务缓存
 	 * key: rpc service name(interface name + version + group)
 	 * value: service object
 	 */
@@ -37,7 +38,10 @@ public class ServiceProviderImpl implements ServiceProvider{
 		serviceMap = new ConcurrentHashMap<>();
 		registeredService = ConcurrentHashMap.newKeySet();
 		// 依据SPI动态加载类  此时配置的是ZkServiceRegistry
-		serviceRegistry = ExtensionLoader.getExtensionLoader(ServiceRegistry.class).getExtension("zk");
+		serviceRegistry
+				= ExtensionLoader
+				.getExtensionLoader(ServiceRegistry.class)
+				.getExtension("zk");
 	}
 
 	/**

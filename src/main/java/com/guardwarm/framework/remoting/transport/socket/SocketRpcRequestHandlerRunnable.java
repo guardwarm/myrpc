@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
+ * 处理请求
  * @author guardWarm
  * @date 2021-03-14 22:22
  */
@@ -23,7 +24,8 @@ public class SocketRpcRequestHandlerRunnable implements Runnable {
 
 	public SocketRpcRequestHandlerRunnable(Socket socket) {
 		this.socket = socket;
-		this.rpcRequestHandler = SingletonFactory.getInstance(RpcRequestHandler.class);
+		this.rpcRequestHandler = SingletonFactory
+				.getInstance(RpcRequestHandler.class);
 	}
 
 	@Override

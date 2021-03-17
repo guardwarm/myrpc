@@ -3,32 +3,36 @@ package com.guardwarm.framework.provider;
 import com.guardwarm.common.entity.RpcServiceProperties;
 
 /**
+ * 服务提供接口
  * @author guardWarm
  * @date 2021-03-14 16:50
  */
-
 public interface ServiceProvider {
 	/**
-	 * @param service              service object
-	 * @param serviceClass         the interface class implemented by the service instance object
-	 * @param rpcServiceProperties service related attributes
+	 * 增加服务
+	 * @param service              服务对象
+	 * @param serviceClass         服务对象的实现类
+	 * @param rpcServiceProperties 服务关联的属性
 	 */
 	void addService(Object service, Class<?> serviceClass, RpcServiceProperties rpcServiceProperties);
 
 	/**
-	 * @param rpcServiceProperties service related attributes
+	 * 获取服务
+	 * @param rpcServiceProperties 服务关联的属性
 	 * @return service object
 	 */
 	Object getService(RpcServiceProperties rpcServiceProperties);
 
 	/**
-	 * @param service              service object
-	 * @param rpcServiceProperties service related attributes
+	 * 注册服务
+	 * @param service              服务对象
+	 * @param rpcServiceProperties 服务关联的属性
 	 */
 	void publishService(Object service, RpcServiceProperties rpcServiceProperties);
 
 	/**
-	 * @param service service object
+	 * 注册服务
+	 * @param service 服务对象
 	 */
 	void publishService(Object service);
 }

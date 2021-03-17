@@ -12,7 +12,7 @@ import io.protostuff.runtime.RuntimeSchema;
  */
 public class ProtostuffSerializer implements Serializer {
 	/**
-	 * Avoid re applying buffer space every time serialization
+	 * 在每次序列化的时候重新应用缓存空间
 	 */
 	private static final LinkedBuffer BUFFER
 			= LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);

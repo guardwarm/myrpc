@@ -17,34 +17,42 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Arrays;
 
 /**
+ * 解码器--基于length field in the message
  * @author guardWarm
  * @date 2021-03-14 17:04
  */
 @Slf4j
 public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
 	public RpcMessageDecoder() {
-		// lengthFieldOffset: magic code is 4B, and version is 1B, and then full length. so value is 5
-		// lengthFieldLength: full length is 4B. so value is 4
-		// lengthAdjustment: full length include all data and read 9 bytes before, so the left length is (fullLength-9). so values is -9
-		// initialBytesToStrip: we will check magic code and version manually, so do not strip any bytes. so values is 0
+		// lengthFieldOffset: magic code is 4B, and version is 1B ==> value is 5
+		// lengthFieldLength: 长度字段使用4B ==> value is 4
+		// lengthAdjustment: 全长包括所有数据，需跳过前九个字节 ==> values is -9
+		// initialBytesToStrip: 我们将手动检查magic code和version ==> do not strip any bytes ==> values is 0
 		this(RpcConstants.MAX_FRAME_LENGTH, 5, 4, -9, 0);
 	}
 
 	/**
-	 * @param maxFrameLength      Maximum frame length. It decide the maximum length of data that can be received.
-	 *                            If it exceeds, the data will be discarded.
-	 * @param lengthFieldOffset   Length field offset. The length field is the one that skips the specified length of byte.
-	 * @param lengthFieldLength   The number of bytes in the length field.
-	 * @param lengthAdjustment    The compensation value to add to the value of the length field
-	 * @param initialBytesToStrip Number of bytes skipped.
-	 *                            If you need to receive all of the header+body data, this value is 0
-	 *                            if you only want to receive the body data, then you need to skip the number of bytes consumed by the header.
+	 * @param maxFrameLength      最大帧长。它决定了可以接收的最大数据长度。如果超过，数据将被丢弃.
+	 * @param lengthFieldOffset   长度字段偏移量。长度字段是跳过指定字节长度的字段。
+	 * @param lengthFieldLength   长度字段中的字节数。
+	 * @param lengthAdjustment    补偿值添加到长度字段的值，使长度字段变为实际数据长度
+	 * @param initialBytesToStrip 跳过的字节数。
+	 *                            如果您需要接收所有标头+正文数据，则此值为0
+	 *                            如果只想接收正文数据，则需要跳过标头消耗的字节数。
 	 */
-	public RpcMessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength,
+	public RpcMessageDecoder(int maxFrameLength,
+	                         int lengthFieldOffset, int lengthFieldLength,
 	                         int lengthAdjustment, int initialBytesToStrip) {
 		super(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, initialBytesToStrip);
 	}
 
+	/**
+	 * 解码
+	 * @param ctx ChannelHandlerContext
+	 * @param in ByteBuf
+	 * @return 解码后的对象
+	 * @throws Exception Decode frame error
+	 */
 	@Override
 	protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
 		Object decoded = super.decode(ctx, in);
@@ -66,17 +74,24 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
 	}
 
 
+	/**
+	 * 根据协议格式解码
+	 * @param in ByteBuf
+	 * @return 解码后的rpcMessage
+	 */
 	private Object decodeFrame(ByteBuf in) {
 		// note: must read ByteBuf in order
-		checkMagicNumber(in);
-		checkVersion(in);
-		int fullLength = in.readInt();
+		checkMagicNumber(in); // 4B
+		checkVersion(in); // 1B
+		// 包长
+		int fullLength = in.readInt(); // 4B
 		// build RpcMessage object
-		byte messageType = in.readByte();
-		byte codecType = in.readByte();
-		byte compressType = in.readByte();
-		int requestId = in.readInt();
-		RpcMessage rpcMessage = RpcMessage.builder()
+		byte messageType = in.readByte(); // 1B
+		byte codecType = in.readByte();  // 1B
+		byte compressType = in.readByte();  // 1B
+		int requestId = in.readInt();  // 4B
+		RpcMessage rpcMessage
+				= RpcMessage.builder()
 				.codec(codecType)
 				.requestId(requestId)
 				.messageType(messageType).build();
@@ -92,15 +107,17 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
 		if (bodyLength > 0) {
 			byte[] bs = new byte[bodyLength];
 			in.readBytes(bs);
-			// decompress the bytes
+			// 解压缩
 			String compressName = CompressTypeEnum.getName(compressType);
 			Compress compress = ExtensionLoader.getExtensionLoader(Compress.class)
 					.getExtension(compressName);
 			bs = compress.decompress(bs);
-			// deserialize the object
+			// 反序列化
 			String codecName = SerializationTypeEnum.getName(rpcMessage.getCodec());
 			log.info("codec name: [{}] ", codecName);
-			Serializer serializer = ExtensionLoader.getExtensionLoader(Serializer.class)
+			Serializer serializer
+					= ExtensionLoader
+					.getExtensionLoader(Serializer.class)
 					.getExtension(codecName);
 			if (messageType == RpcConstants.REQUEST_TYPE) {
 				RpcRequest tmpValue = serializer.deserialize(bs, RpcRequest.class);
@@ -114,6 +131,10 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
 
 	}
 
+	/**
+	 * 检查Version是否正确
+	 * @param in 待验证ByteBuf
+	 */
 	private void checkVersion(ByteBuf in) {
 		// read the version and compare
 		byte version = in.readByte();
@@ -122,6 +143,10 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
 		}
 	}
 
+	/**
+	 * MagicNumber是否正确
+	 * @param in 待验证ByteBuf
+	 */
 	private void checkMagicNumber(ByteBuf in) {
 		// read the first 4 bit, which is the magic number, and compare
 		int len = RpcConstants.MAGIC_NUMBER.length;

@@ -19,12 +19,12 @@ public class RpcRequestHandler {
 	private final ServiceProvider serviceProvider;
 
 	public RpcRequestHandler() {
-		serviceProvider = SingletonFactory.getInstance(ServiceProviderImpl.class);
+		serviceProvider
+				= SingletonFactory.getInstance(ServiceProviderImpl.class);
 	}
 
 	/**
-	 * Processing rpcRequest: call the corresponding method,
-	 * and then return the method
+	 * 处理rpcRequest：调用相应的方法，返回执行结果
 	 */
 	public Object handle(RpcRequest rpcRequest) {
 		Object service = serviceProvider.getService(rpcRequest.toRpcProperties());
@@ -32,16 +32,16 @@ public class RpcRequestHandler {
 	}
 
 	/**
-	 * get method execution results
-	 *
-	 * @param rpcRequest client request
-	 * @param service    service object
-	 * @return the result of the target method execution
+	 * 获取方法执行结果
+	 * @param rpcRequest 请求
+	 * @param service    服务
+	 * @return 方法执行结果
 	 */
 	private Object invokeTargetMethod(RpcRequest rpcRequest, Object service) {
 		Object result;
 		try {
-			Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
+			Method method = service.getClass()
+					.getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
 			result = method.invoke(service, rpcRequest.getParameters());
 			log.info("service:[{}] successful invoke method:[{}]", rpcRequest.getInterfaceName(), rpcRequest.getMethodName());
 		} catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {

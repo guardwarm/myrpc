@@ -46,23 +46,29 @@ public class NettyRpcClient implements RpcRequestTransport {
 		bootstrap.group(eventLoopGroup)
 				.channel(NioSocketChannel.class)
 				.handler(new LoggingHandler(LogLevel.INFO))
-				//  The timeout period of the connection.
-				//  If this time is exceeded or the connection cannot be established, the connection fails.
+				// 连接超时时间
 				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
 				.handler(new ChannelInitializer<SocketChannel>() {
 					@Override
 					protected void initChannel(SocketChannel ch) {
 						ChannelPipeline p = ch.pipeline();
-						// If no data is sent to the server within 15 seconds, a heartbeat request is sent
-						p.addLast(new IdleStateHandler(0, 5, 0, TimeUnit.SECONDS));
+						// 每15秒进行一次写检测
+						p.addLast(new IdleStateHandler(0, 15, 0, TimeUnit.SECONDS));
 						p.addLast(new RpcMessageEncoder());
 						p.addLast(new RpcMessageDecoder());
 						p.addLast(new NettyRpcClientHandler());
 					}
 				});
-		this.serviceDiscovery = ExtensionLoader.getExtensionLoader(ServiceDiscovery.class).getExtension("zk");
-		this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
-		this.channelProvider = SingletonFactory.getInstance(ChannelProvider.class);
+		this.serviceDiscovery
+				= ExtensionLoader
+				.getExtensionLoader(ServiceDiscovery.class)
+				.getExtension("zk");
+		this.unprocessedRequests
+				= SingletonFactory
+				.getInstance(UnprocessedRequests.class);
+		this.channelProvider
+				= SingletonFactory
+				.getInstance(ChannelProvider.class);
 	}
 
 	/**

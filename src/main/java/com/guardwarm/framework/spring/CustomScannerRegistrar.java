@@ -13,6 +13,7 @@ import org.springframework.core.type.StandardAnnotationMetadata;
 import org.springframework.stereotype.Component;
 
 /**
+ * 注册定制化扫描
  * @author guardWarm
  * @date 2021-03-14 13:33
  */
@@ -27,7 +28,6 @@ public class CustomScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 	@Override
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
-
 	}
 
 	/**
@@ -38,19 +38,25 @@ public class CustomScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 	public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry beanDefinitionRegistry) {
 		//get the attributes and values of RpcScan annotation
 		AnnotationAttributes rpcScanAnnotationAttributes
-				= AnnotationAttributes.fromMap(annotationMetadata.getAnnotationAttributes(RpcScan.class.getName()));
+				= AnnotationAttributes
+				.fromMap(annotationMetadata
+						.getAnnotationAttributes(RpcScan.class.getName()));
 		String[] rpcScanBasePackages = new String[0];
 		if (rpcScanAnnotationAttributes != null) {
 			// get the value of the basePackage property
-			rpcScanBasePackages = rpcScanAnnotationAttributes.getStringArray(BASE_PACKAGE_ATTRIBUTE_NAME);
+			rpcScanBasePackages
+					= rpcScanAnnotationAttributes
+					.getStringArray(BASE_PACKAGE_ATTRIBUTE_NAME);
 		}
 		if (rpcScanBasePackages.length == 0) {
 			rpcScanBasePackages = new String[]{((StandardAnnotationMetadata) annotationMetadata).getIntrospectedClass().getPackage().getName()};
 		}
 		// Scan the RpcService annotation
-		CustomScanner rpcServiceScanner = new CustomScanner(beanDefinitionRegistry, RpcService.class);
+		CustomScanner rpcServiceScanner
+				= new CustomScanner(beanDefinitionRegistry, RpcService.class);
 		// Scan the Component annotation
-		CustomScanner springBeanScanner = new CustomScanner(beanDefinitionRegistry, Component.class);
+		CustomScanner springBeanScanner
+				= new CustomScanner(beanDefinitionRegistry, Component.class);
 		if (resourceLoader != null) {
 			rpcServiceScanner.setResourceLoader(resourceLoader);
 			springBeanScanner.setResourceLoader(resourceLoader);
@@ -59,7 +65,6 @@ public class CustomScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
 		log.info("springBeanScanner扫描的数量 [{}]", springBeanAmount);
 		int rpcServiceCount = rpcServiceScanner.scan(rpcScanBasePackages);
 		log.info("rpcServiceScanner扫描的数量 [{}]", rpcServiceCount);
-
 	}
 }
 

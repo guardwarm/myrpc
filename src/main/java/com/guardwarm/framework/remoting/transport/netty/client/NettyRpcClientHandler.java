@@ -32,7 +32,7 @@ public class NettyRpcClientHandler extends ChannelInboundHandlerAdapter {
 	}
 
 	/**
-	 * Read the message transmitted by the server
+	 * 读取服务端发回的数据
 	 */
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -53,6 +53,9 @@ public class NettyRpcClientHandler extends ChannelInboundHandlerAdapter {
 		}
 	}
 
+	/**
+	 * 处理心跳机制
+	 */
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent) {
@@ -73,7 +76,7 @@ public class NettyRpcClientHandler extends ChannelInboundHandlerAdapter {
 	}
 
 	/**
-	 * Called when an exception occurs in processing a client message
+	 * 在处理客户消息发生异常时调用
 	 */
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

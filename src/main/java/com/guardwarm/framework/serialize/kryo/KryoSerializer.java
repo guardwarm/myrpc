@@ -1,4 +1,4 @@
-package com.guardwarm.framework.serialize.kyro;
+package com.guardwarm.framework.serialize.kryo;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
@@ -17,7 +17,8 @@ import java.io.ByteArrayOutputStream;
  */
 public class KryoSerializer implements Serializer {
 	/**
-	 * Because Kryo is not thread safe. So, use ThreadLocal to store Kryo objects
+	 * kyro不是线程安全的，所以使用ThreadLocal
+	 * 每次get()时无数据时，会执行withInitial
 	 */
 	private final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
 		Kryo kryo = new Kryo();
@@ -30,9 +31,11 @@ public class KryoSerializer implements Serializer {
 	public byte[] serialize(Object obj) {
 		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		     Output output = new Output(byteArrayOutputStream)) {
+			// 拿不到数据时会设置为初始值
 			Kryo kryo = kryoThreadLocal.get();
 			// Object->byte:将对象序列化为byte数组
 			kryo.writeObject(output, obj);
+			// 用完就remove()避免内存泄漏
 			kryoThreadLocal.remove();
 			return output.toBytes();
 		} catch (Exception e) {
